@@ -1,0 +1,9 @@
+.footer {
+    background-color: #f0f0f0;
+    padding: 1rem;
+    text-align: center;
+    position: fixed; /* フッターを固定 */
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}

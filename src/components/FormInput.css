@@ -1,0 +1,6 @@
+.form-input input,
+.form-input textarea { /* textarea を追加 */
+    padding: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+}

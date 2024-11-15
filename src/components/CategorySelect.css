@@ -1,0 +1,16 @@
+.category-select-container {
+    margin-bottom: 1rem; /* 適宜調整 */
+}
+
+.category-select-container label {
+    display: block;
+    margin-bottom: 0.5rem; /* 適宜調整 */
+}
+
+.category-select {
+    width: 100%;
+    padding: 0.5rem; /* 適宜調整 */
+    border: 1px solid #ced4da; /* 適宜調整 */
+    border-radius: 0.25rem; /* 適宜調整 */
+    appearance: none; /* ブラウザデフォルトのスタイルを無効化 */
+}
