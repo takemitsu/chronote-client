@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getCategories } from '../services/api'
+import { deleteCategory, getCategories } from '../services/api'
 import CategoryItem from '../components/CategoryItem'
 import axios from 'axios'
-import { Category } from '../types/apiTypes.ts'
+import { Category } from '../types/category.ts'
 import ErrorAlert from '../components/ErrorAlert'
 import LoadingIndicator from '../components/LoadingIndicator.tsx'
+import Modal from '../components/Modal.tsx'
+import Button from '../components/Button.tsx'
 
 const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -33,12 +36,20 @@ const CategoryList: React.FC = () => {
   }, [])
 
   const handleDeleteCategory = async (id: number) => {
-    try {
-      // TODO: API を使用してカテゴリを削除する処理を実装
-      console.log(`カテゴリ ${id} を削除`)
+    setDeleteTargetId(id) // 削除対象のIDをstateに設定
+  }
 
-      // 削除に成功したら、state を更新
-      setCategories(categories.filter((category) => category.id !== id))
+  const handleCloseModal = () => {
+    setDeleteTargetId(null) // モーダルを閉じる際に削除対象IDをnullに戻す
+  }
+
+  const handleConfirmDelete = async () => {
+    if (deleteTargetId === null) return // 削除対象IDがnullの場合は何もしない
+
+    try {
+      setIsLoading(true) // ローディング状態をtrueに設定
+      await deleteCategory(deleteTargetId) // APIでカテゴリを削除
+      setCategories(categories.filter((category) => category.id !== deleteTargetId)) // stateを更新
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         setErrorMessage(error.response?.data?.message || 'カテゴリの削除に失敗しました')
@@ -46,6 +57,9 @@ const CategoryList: React.FC = () => {
         console.error('予期せぬエラーが発生しました:', error)
         setErrorMessage('カテゴリの削除に失敗しました')
       }
+    } finally {
+      setIsLoading(false) // ローディング状態をfalseに設定
+      setDeleteTargetId(null) // 削除対象IDをnullに戻す
     }
   }
 
@@ -71,6 +85,23 @@ const CategoryList: React.FC = () => {
           </ul>
         </>
       )}
+      <Modal
+        isOpen={deleteTargetId !== null} // 削除対象IDがnullでない場合にモーダルを表示
+        onClose={handleCloseModal}
+        title="カテゴリ削除の確認">
+        <p className="mb-4">
+          カテゴリ「
+          {categories.find((c) => c.id === deleteTargetId)?.name}」を削除しますか？
+        </p>
+        <div className="flex justify-end">
+          <Button onClick={handleCloseModal} className="mr-2">
+            キャンセル
+          </Button>
+          <Button onClick={handleConfirmDelete} className="bg-red-500 hover:bg-red-700">
+            削除
+          </Button>
+        </div>
+      </Modal>
     </div>
   )
 }

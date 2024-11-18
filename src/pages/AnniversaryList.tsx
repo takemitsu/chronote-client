@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getAnniversaries, getCategories } from '../services/api'
+import { deleteAnniversary, getAnniversaries, getCategories } from '../services/api'
 import { Anniversary, Category } from '../types/apiTypes'
 import AnniversaryItem from '../components/AnniversaryItem'
 import ErrorAlert from '../components/ErrorAlert'
 import axios from 'axios'
 import LoadingIndicator from '../components/LoadingIndicator.tsx'
+import Modal from '../components/Modal.tsx'
+import Button from '../components/Button.tsx'
 
 const AnniversaryList: React.FC = () => {
   const [anniversaries, setAnniversaries] = useState<Anniversary[]>([])
   const [categories, setCategories] = useState<{ id: number; name: string }[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
 
   useEffect(() => {
     const fetchAnniversaries = async () => {
@@ -53,12 +56,21 @@ const AnniversaryList: React.FC = () => {
     void fetchCategories()
   }, [])
 
-  const handleDeleteAnniversary = async (id: number) => {
-    try {
-      // TODO: API を使用して記念日を削除する処理を実装
-      console.log(`記念日 ${id} を削除`)
+  const handleDeleteAnniversary = (id: number) => {
+    setDeleteTargetId(id) // 削除対象の記念日IDをstateに設定
+  }
 
-      setAnniversaries(anniversaries.filter((anniversary) => anniversary.id !== id))
+  const handleCloseModal = () => {
+    setDeleteTargetId(null) // モーダルを閉じる際に削除対象IDをnullに戻す
+  }
+
+  const handleConfirmDelete = async () => {
+    if (deleteTargetId === null) return // 削除対象IDがnullの場合は何もしない
+
+    try {
+      setIsLoading(true)
+      await deleteAnniversary(deleteTargetId) // API で記念日を削除
+      setAnniversaries(anniversaries.filter((anniversary) => anniversary.id !== deleteTargetId))
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         setErrorMessage(error.response?.data?.message || '記念日の削除に失敗しました')
@@ -66,6 +78,9 @@ const AnniversaryList: React.FC = () => {
         console.error('予期せぬエラーが発生しました:', error)
         setErrorMessage('記念日の削除に失敗しました')
       }
+    } finally {
+      setIsLoading(false)
+      setDeleteTargetId(null)
     }
   }
 
@@ -110,6 +125,24 @@ const AnniversaryList: React.FC = () => {
           ))}
         </>
       )}
+      <Modal
+        isOpen={deleteTargetId !== null} // 削除対象IDがnullでない場合にモーダルを表示
+        onClose={handleCloseModal}
+        title="記念日削除の確認">
+        <p className="mb-4">
+          記念日「
+          {anniversaries.find((anniversary) => anniversary.id === deleteTargetId)?.name}
+          」を削除しますか？
+        </p>
+        <div className="flex justify-end">
+          <Button onClick={handleCloseModal} className="mr-2">
+            キャンセル
+          </Button>
+          <Button onClick={handleConfirmDelete} className="bg-red-500 hover:bg-red-700">
+            削除
+          </Button>
+        </div>
+      </Modal>
     </div>
   )
 }

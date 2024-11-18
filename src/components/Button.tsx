@@ -14,7 +14,16 @@ const Button: React.FC<Props> = ({ children, onClick, disabled = false, type = '
       type={type}
       {...(onClick && { onClick })}
       disabled={disabled}
-      className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${className}`}>
+      className={`
+        ${
+          disabled
+            ? // disabled が true の場合
+              'bg-gray-400 cursor-not-allowed' // グレーの背景、カーソルを not-allowed に
+            : // そうでない場合は className をそのまま適用
+              className
+        }
+        text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline
+      `}>
       {children}
     </button>
   )
