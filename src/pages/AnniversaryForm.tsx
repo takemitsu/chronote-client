@@ -46,9 +46,10 @@ const AnniversaryForm: React.FC = () => {
       try {
         const categories = await getCategories()
         setCategories(categories)
-
         // categories が更新されたら、categoryId を更新
         setCategoryId(categories[0]?.id || 0)
+        // fetchCategories が完了してから fetchAnniversary を実行
+        void fetchAnniversary()
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
           setErrorMessage(error.response?.data?.message || 'カテゴリの取得に失敗しました')
@@ -59,7 +60,6 @@ const AnniversaryForm: React.FC = () => {
       }
     }
 
-    void fetchAnniversary()
     void fetchCategories()
   }, [id, isEditing])
 
