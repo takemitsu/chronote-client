@@ -1,25 +1,27 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Category } from '../types/apiTypes'
-import Button from './Button.tsx' // Category型をインポート
+import Button from './Button.tsx'
 
 interface Props {
-  category: Category // 表示するカテゴリの情報
-  onDelete?: (id: number) => void // カテゴリを削除するための関数 (オプション)
+  category: Category
+  onDelete?: (id: number) => void
 }
 
 const CategoryItem: React.FC<Props> = ({ category, onDelete }) => {
   const handleDelete = () => {
     if (onDelete) {
-      onDelete(category.id!) // onDelete 関数が存在する場合は、カテゴリIDを渡して実行する
+      onDelete(category.id!)
     }
   }
 
   return (
-    <div>
-      <Link to={`/categories/${category.id}/edit`}>{category.name}</Link>
-      {onDelete && ( // onDelete 関数が存在する場合のみ削除ボタンを表示
-        <Button type="button" onClick={handleDelete}>
+    <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      <Link to={`/categories/${category.id}/edit`} className="text-blue-500 hover:text-blue-700">
+        {category.name}
+      </Link>
+      {onDelete && (
+        <Button type="button" onClick={handleDelete} className="bg-red-500 hover:bg-red-700">
           削除
         </Button>
       )}

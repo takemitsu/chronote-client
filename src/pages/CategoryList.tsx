@@ -4,6 +4,7 @@ import { getCategories } from '../services/api'
 import CategoryItem from '../components/CategoryItem'
 import axios from 'axios'
 import { Category } from '../types/apiTypes.ts'
+import ErrorAlert from '../components/ErrorAlert'
 
 const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([])
@@ -45,11 +46,15 @@ const CategoryList: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1>カテゴリ一覧</h1>
-      {errorMessage && <div className="error">{errorMessage}</div>}
-      <Link to="/categories/new">新規登録</Link>
-      <ul>
+    <div className="container mx-auto p-8">
+      <h1 className="text-3xl font-bold mb-6">カテゴリ一覧</h1>
+      {errorMessage && <ErrorAlert message={errorMessage} />}
+      <Link
+        to="/categories/new"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4">
+        新規登録
+      </Link>
+      <ul className="space-y-4">
         {categories.map((category) => (
           <li key={category.id}>
             <CategoryItem category={category} onDelete={handleDeleteCategory} />

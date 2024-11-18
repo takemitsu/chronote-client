@@ -7,18 +7,15 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   }
 
   static getDerivedStateFromError(error: unknown) {
-    // エラーが発生したことを state に記録する
     return { hasError: true, error }
   }
 
-  componentDidCatch(error: unknown, errorInfo: React.ErrorInfo) {
-    // エラーログを送信するなどの処理を行う
-    console.error(error, errorInfo)
-  }
+  // componentDidCatch(error: unknown, errorInfo: React.ErrorInfo) {
+  //   console.error(error, errorInfo);
+  // }
 
   render() {
     if (this.state.hasError) {
-      // エラーが発生した場合は、フォールバック UI をレンダリングする
       return (
         <div>
           <h1>Something went wrong.</h1>

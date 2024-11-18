@@ -1,8 +1,0 @@
-.error-alert {
-    background-color: #f8d7da; /* 赤みがかった背景 */
-    color: #721c24; /* 赤みがかったテキスト */
-    border: 1px solid #f5c6cb; /* 赤みがかった境界線 */
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px; /* 下部に余白を追加 */
-}

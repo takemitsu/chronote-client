@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { createAnniversary, getAnniversary, updateAnniversary, getCategories } from '../services/api'
 import { Anniversary } from '../types/apiTypes'
 import FormInput from '../components/FormInput'
 import Button from '../components/Button'
 import ErrorAlert from '../components/ErrorAlert'
-import DatePicker from '../components/DatePicker' // DatePicker をインポート
+import DatePicker from '../components/DatePicker'
 import { Category } from '../types/category'
 import axios from 'axios'
 import CategorySelect from '../components/CategorySelect.tsx'
@@ -16,7 +16,7 @@ const AnniversaryForm: React.FC = () => {
   const { id } = useParams()
   const isEditing = !!id
   const [name, setName] = useState('')
-  const [date, setDate] = useState<Date | null>(null) // Date型に変更
+  const [date, setDate] = useState<Date | null>(null)
   const [description, setDescription] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
   const [categoryId, setCategoryId] = useState<number>(() => categories[0]?.id || 0)
@@ -29,7 +29,7 @@ const AnniversaryForm: React.FC = () => {
           const anniversary = await getAnniversary(Number(id))
           setName(anniversary.name)
           setCategoryId(anniversary.categoryId)
-          setDate(new Date(anniversary.date)) // 文字列からDate型に変換
+          setDate(new Date(anniversary.date))
           setDescription(anniversary.description || '')
         } catch (error: unknown) {
           if (axios.isAxiosError(error)) {
@@ -84,7 +84,6 @@ const AnniversaryForm: React.FC = () => {
         userId: Number(userId),
         categoryId,
         name,
-        // date: date.toISOString().split('T')[0], // Date型をYYYY-MM-DD形式に変換
         date: format(date, 'yyyy-MM-dd'), // JSTでフォーマット変換
         description,
       }
@@ -107,14 +106,17 @@ const AnniversaryForm: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1>{isEditing ? '記念日編集' : '記念日登録'}</h1>
+    <div className="container mx-auto p-8">
+      <h1 className="text-3xl font-bold mb-6">{isEditing ? '記念日編集' : '記念日登録'}</h1>
       {errorMessage && <ErrorAlert message={errorMessage} />}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="w-full max-w-sm">
         <FormInput label="記念日名" id="name" value={name} onChange={(e) => setName(e.target.value)} />
 
-        <CategorySelect // CategorySelect を使用
-          categories={categories.map((category) => ({ id: category.id!, name: category.name }))}
+        <CategorySelect
+          categories={categories.map((category) => ({
+            id: category.id!,
+            name: category.name,
+          }))}
           selectedCategoryId={categoryId}
           onChange={setCategoryId}
           label="カテゴリ"
@@ -128,11 +130,18 @@ const AnniversaryForm: React.FC = () => {
           label="説明"
           id="description"
           value={description}
-          rows={3}
           onChange={(e) => setDescription(e.target.value)}
+          rows={3}
         />
 
-        <Button type="submit">{isEditing ? '更新' : '登録'}</Button>
+        <Button type="submit" className="w-full">
+          {isEditing ? '更新' : '登録'}
+        </Button>
+        <Link
+          to="/anniversaries"
+          className="mt-2 block w-full text-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          記念日一覧に戻る
+        </Link>
       </form>
     </div>
   )

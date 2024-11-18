@@ -1,14 +1,11 @@
 import React from 'react'
-import './Footer.css' // 必要に応じて CSS をインポート
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="footer">
-      <div className="footer-content">
-        <p>&copy; {currentYear} Chronote</p>
-      </div>
+    <footer className="bg-gray-100 py-4 shadow-md mt-8">
+      <div className="container mx-auto text-center text-gray-600">&copy; {currentYear} Chronote</div>
     </footer>
   )
 }

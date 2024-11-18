@@ -4,7 +4,6 @@ import { getAnniversaries, getCategories } from '../services/api'
 import { Anniversary, Category } from '../types/apiTypes'
 import AnniversaryItem from '../components/AnniversaryItem'
 import ErrorAlert from '../components/ErrorAlert'
-import './AnniversaryList.css'
 import axios from 'axios'
 
 const AnniversaryList: React.FC = () => {
@@ -66,7 +65,6 @@ const AnniversaryList: React.FC = () => {
     }
   }
 
-  // カテゴリごとに記念日をグルーピング
   const groupedAnniversaries = anniversaries.reduce(
     (acc, anniversary) => {
       const categoryId = anniversary.categoryId
@@ -80,21 +78,27 @@ const AnniversaryList: React.FC = () => {
   )
 
   return (
-    <div>
-      <h1>記念日一覧</h1>
+    <div className="container mx-auto p-8">
+      <h1 className="text-3xl font-bold mb-6">記念日一覧</h1>
       {errorMessage && <ErrorAlert message={errorMessage} />}
-      <Link to="/anniversaries/new">新規登録</Link>
+      <Link
+        to="/anniversaries/new"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4">
+        新規登録
+      </Link>
       {Object.entries(groupedAnniversaries).map(([categoryId, anniversaries]) => (
-        <React.Fragment key={categoryId}>
-          <h2>カテゴリ {categories.find((category) => category.id === Number(categoryId))?.name}</h2>
-          <ul>
+        <div key={categoryId} className="mb-8">
+          <h2 className="text-xl font-bold mb-4 mt-4">
+            カテゴリ {categories.find((category) => category.id === Number(categoryId))?.name}
+          </h2>
+          <ul className="space-y-4">
             {anniversaries.map((anniversary) => (
               <li key={anniversary.id}>
                 <AnniversaryItem anniversary={anniversary} onDelete={handleDeleteAnniversary} />
               </li>
             ))}
           </ul>
-        </React.Fragment>
+        </div>
       ))}
     </div>
   )

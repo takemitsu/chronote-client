@@ -1,5 +1,4 @@
 import React from 'react'
-import './FormInput.css' // FormInput.css をインポート
 
 interface Props {
   label: string
@@ -8,30 +7,36 @@ interface Props {
   value: string
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   errorMessage?: string
-  rows?: number // textarea の rows 属性
+  rows?: number
 }
 
-const FormInput: React.FC<Props> = ({
-  label,
-  type = 'text',
-  id,
-  value,
-  onChange,
-  errorMessage,
-  rows, // rows 属性を追加
-}) => {
+const FormInput: React.FC<Props> = ({ label, type = 'text', id, value, onChange, errorMessage, rows }) => {
   const inputElement =
-    type === 'textarea' ? ( // type が textarea の場合
-      <textarea id={id} value={value} onChange={onChange} rows={rows} />
+    type === 'textarea' ? (
+      <textarea
+        id={id}
+        value={value}
+        onChange={onChange}
+        rows={rows}
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      />
     ) : (
-      <input type={type} id={id} value={value} onChange={onChange} />
+      <input
+        type={type}
+        id={id}
+        value={value}
+        onChange={onChange}
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      />
     )
 
   return (
-    <div className="form-input">
-      <label htmlFor={id}>{label}:</label>
+    <div className="mb-4">
+      <label htmlFor={id} className="block text-gray-700 font-bold mb-2">
+        {label}:
+      </label>
       {inputElement}
-      {errorMessage && <div className="error">{errorMessage}</div>}
+      {errorMessage && <div className="text-red-500 text-xs italic">{errorMessage}</div>}
     </div>
   )
 }

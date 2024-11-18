@@ -1,5 +1,4 @@
 import React from 'react'
-import './CategorySelect.css'
 
 interface Props {
   categories: { id: number; name: string }[]
@@ -11,13 +10,17 @@ interface Props {
 
 const CategorySelect: React.FC<Props> = ({ categories, selectedCategoryId, onChange, label, id }) => {
   return (
-    <div className="category-select-container">
-      {label && <label htmlFor={id}>{label}:</label>}
+    <div className="mb-4">
+      {label && (
+        <label htmlFor={id} className="block text-gray-700 font-bold mb-2">
+          {label}:
+        </label>
+      )}
       <select
         id={id}
-        value={selectedCategoryId || categories[0]?.id || 0}
+        value={selectedCategoryId}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="category-select">
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
         {categories.map((category) => (
           <option key={category.id} value={category.id}>
             {category.name}

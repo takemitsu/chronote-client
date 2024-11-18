@@ -21,19 +21,15 @@ const Login: React.FC = () => {
       const data: SigninRequest = { email, password }
       const response = await signin(data)
 
-      // ログイン成功時の処理 (例: JWT を localStorage に保存)
       localStorage.setItem('token', response.token)
       localStorage.setItem('userId', response.user.id.toString())
       localStorage.setItem('redirectPath', '/anniversaries')
 
-      // 記念日一覧画面にリダイレクト
       navigate('/anniversaries')
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        // AxiosError 型の場合のエラー処理
         setErrorMessage(error.response?.data?.message || 'ログインに失敗しました')
       } else {
-        // 予期せぬエラーの場合の処理
         console.error('予期せぬエラーが発生しました:', error)
         setErrorMessage('ログインに失敗しました')
       }
@@ -41,10 +37,10 @@ const Login: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1>ログイン</h1>
+    <div className="container mx-auto p-8">
+      <h1 className="text-3xl font-bold mb-6">ログイン</h1>
       {errorMessage && <ErrorAlert message={errorMessage} />}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="w-full max-w-sm">
         <FormInput label="メールアドレス" id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <FormInput
           label="パスワード"
@@ -53,7 +49,9 @@ const Login: React.FC = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button type="submit">ログイン</Button>
+        <Button type="submit" className="w-full">
+          ログイン
+        </Button>
       </form>
     </div>
   )

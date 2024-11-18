@@ -22,14 +22,11 @@ const Signup: React.FC = () => {
       const data: SignupRequest = { name, email, password }
       await signup(data)
 
-      // 登録成功時の処理
       navigate('/login')
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        // AxiosError 型の場合のエラー処理
         setErrorMessage(error.response?.data?.message || '登録に失敗しました')
       } else {
-        // 予期せぬエラーの場合の処理
         console.error('予期せぬエラーが発生しました:', error)
         setErrorMessage('登録に失敗しました')
       }
@@ -37,10 +34,10 @@ const Signup: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1>新規登録</h1>
+    <div className="container mx-auto p-8">
+      <h1 className="text-3xl font-bold mb-6">新規登録</h1>
       {errorMessage && <ErrorAlert message={errorMessage} />}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="w-full max-w-sm">
         <FormInput label="ユーザー名" id="name" value={name} onChange={(e) => setName(e.target.value)} />
         <FormInput label="メールアドレス" id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <FormInput
@@ -50,7 +47,9 @@ const Signup: React.FC = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button type="submit">登録</Button>
+        <Button type="submit" className="w-full">
+          登録
+        </Button>
       </form>
     </div>
   )
