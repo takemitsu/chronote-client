@@ -9,7 +9,8 @@ import DatePicker from '../components/DatePicker'
 import { Category } from '../types/category'
 import axios from 'axios'
 import CategorySelect from '../components/CategorySelect.tsx'
-import { format } from 'date-fns' // Category型をインポート
+import { format } from 'date-fns'
+import LoadingIndicator from '../components/LoadingIndicator.tsx'
 
 const AnniversaryForm: React.FC = () => {
   const navigate = useNavigate()
@@ -20,6 +21,7 @@ const AnniversaryForm: React.FC = () => {
   const [description, setDescription] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
   const [categoryId, setCategoryId] = useState<number>(() => categories[0]?.id || 0)
+  const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
@@ -38,7 +40,11 @@ const AnniversaryForm: React.FC = () => {
             console.error('予期せぬエラーが発生しました:', error)
             setErrorMessage('記念日の取得に失敗しました')
           }
+        } finally {
+          setIsLoading(false)
         }
+      } else {
+        setIsLoading(false)
       }
     }
 
@@ -87,6 +93,7 @@ const AnniversaryForm: React.FC = () => {
         date: format(date, 'yyyy-MM-dd'), // JSTでフォーマット変換
         description,
       }
+      setIsLoading(true)
       if (isEditing) {
         await updateAnniversary(Number(id), data)
       } else {
@@ -102,47 +109,55 @@ const AnniversaryForm: React.FC = () => {
         console.error('予期せぬエラーが発生しました:', error)
         setErrorMessage(isEditing ? '記念日の更新に失敗しました' : '記念日の登録に失敗しました')
       }
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <div className="container mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">{isEditing ? '記念日編集' : '記念日登録'}</h1>
-      {errorMessage && <ErrorAlert message={errorMessage} />}
-      <form onSubmit={handleSubmit} className="w-full max-w-sm">
-        <FormInput label="記念日名" id="name" value={name} onChange={(e) => setName(e.target.value)} />
+      {isLoading ? (
+        <LoadingIndicator />
+      ) : (
+        <>
+          <h1 className="text-3xl font-bold mb-6">{isEditing ? '記念日編集' : '記念日登録'}</h1>
+          {errorMessage && <ErrorAlert message={errorMessage} />}
+          <form onSubmit={handleSubmit} className="w-full max-w-sm">
+            <FormInput label="記念日名" id="name" value={name} onChange={(e) => setName(e.target.value)} />
 
-        <CategorySelect
-          categories={categories.map((category) => ({
-            id: category.id!,
-            name: category.name,
-          }))}
-          selectedCategoryId={categoryId}
-          onChange={setCategoryId}
-          label="カテゴリ"
-          id="categoryId"
-        />
+            <CategorySelect
+              categories={categories.map((category) => ({
+                id: category.id!,
+                name: category.name,
+              }))}
+              selectedCategoryId={categoryId}
+              onChange={setCategoryId}
+              label="カテゴリ"
+              id="categoryId"
+            />
 
-        <DatePicker selectedDate={date} onChange={setDate} label="日付" id="date" dateFormat="yyyy/MM/dd" />
+            <DatePicker selectedDate={date} onChange={setDate} label="日付" id="date" dateFormat="yyyy/MM/dd" />
 
-        <FormInput
-          type="textarea"
-          label="説明"
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={3}
-        />
+            <FormInput
+              type="textarea"
+              label="説明"
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+            />
 
-        <Button type="submit" className="w-full">
-          {isEditing ? '更新' : '登録'}
-        </Button>
-        <Link
-          to="/anniversaries"
-          className="mt-2 block w-full text-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-          記念日一覧に戻る
-        </Link>
-      </form>
+            <Button type="submit" className="w-full">
+              {isEditing ? '更新' : '登録'}
+            </Button>
+            <Link
+              to="/anniversaries"
+              className="mt-2 block w-full text-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              記念日一覧に戻る
+            </Link>
+          </form>
+        </>
+      )}
     </div>
   )
 }

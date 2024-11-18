@@ -5,10 +5,12 @@ import { Anniversary, Category } from '../types/apiTypes'
 import AnniversaryItem from '../components/AnniversaryItem'
 import ErrorAlert from '../components/ErrorAlert'
 import axios from 'axios'
+import LoadingIndicator from '../components/LoadingIndicator.tsx'
 
 const AnniversaryList: React.FC = () => {
   const [anniversaries, setAnniversaries] = useState<Anniversary[]>([])
   const [categories, setCategories] = useState<{ id: number; name: string }[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
@@ -23,6 +25,8 @@ const AnniversaryList: React.FC = () => {
           console.error('予期せぬエラーが発生しました:', error)
           setErrorMessage('記念日の取得に失敗しました')
         }
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -79,27 +83,33 @@ const AnniversaryList: React.FC = () => {
 
   return (
     <div className="container mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">記念日一覧</h1>
-      {errorMessage && <ErrorAlert message={errorMessage} />}
-      <Link
-        to="/anniversaries/new"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4">
-        新規登録
-      </Link>
-      {Object.entries(groupedAnniversaries).map(([categoryId, anniversaries]) => (
-        <div key={categoryId} className="mb-8">
-          <h2 className="text-xl font-bold mb-4 mt-4">
-            カテゴリ {categories.find((category) => category.id === Number(categoryId))?.name}
-          </h2>
-          <ul className="space-y-4">
-            {anniversaries.map((anniversary) => (
-              <li key={anniversary.id}>
-                <AnniversaryItem anniversary={anniversary} onDelete={handleDeleteAnniversary} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      {isLoading ? (
+        <LoadingIndicator />
+      ) : (
+        <>
+          <h1 className="text-3xl font-bold mb-6">記念日一覧</h1>
+          {errorMessage && <ErrorAlert message={errorMessage} />}
+          <Link
+            to="/anniversaries/new"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4">
+            新規登録
+          </Link>
+          {Object.entries(groupedAnniversaries).map(([categoryId, anniversaries]) => (
+            <div key={categoryId} className="mb-8">
+              <h2 className="text-xl font-bold mb-4 mt-4">
+                カテゴリ {categories.find((category) => category.id === Number(categoryId))?.name}
+              </h2>
+              <ul className="space-y-4">
+                {anniversaries.map((anniversary) => (
+                  <li key={anniversary.id}>
+                    <AnniversaryItem anniversary={anniversary} onDelete={handleDeleteAnniversary} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </>
+      )}
     </div>
   )
 }

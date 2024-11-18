@@ -6,8 +6,11 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false) // モバイルメニューの状態
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
-    window.location.href = '/login'
+    if (window.confirm('ログアウトしますか？')) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('userId')
+      window.location.href = '/login'
+    }
   }
 
   const handleLinkClick = () => {

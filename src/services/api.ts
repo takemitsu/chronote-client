@@ -27,6 +27,10 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       console.error(error)
       setTimeout(() => {
+        // localStorage からログイン情報を削除
+        localStorage.removeItem('token')
+        localStorage.removeItem('userId')
+
         window.location.href = '/login'
       }, 5000) // 5000ミリ秒 = 5秒
     }
